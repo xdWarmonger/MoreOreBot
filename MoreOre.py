@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8
 
-'''A bot that automatically clicks on critical spots. You have to unlock them first for the bot to work.'''
+'''A bot that automatically clicks on critical spots if you hold down the specified button.
+You have to unlock them first for the bot to work.
+https://syns.studio/more-ore/'''
 
 import numpy as np
 import cv2 as cv
