@@ -9,7 +9,7 @@ import time
 import numpy as np
 import cv2 as cv
 import mss
-from keyboard import read_key
+from keyboard import read_key, is_pressed
 import mouse
 from selenium import webdriver
 
@@ -18,27 +18,30 @@ def main():
     autoclicker(xscreen, yscreen, offset, window)
 
 def get_ore_loc():
-    driver = webdriver.Chrome(executable_path="D:\Program Files\Chromedriver\chromedriver.exe")
+    browserchoice = input('chrome or firefox?')
+    if  browserchoice == 'chrome':
+        driver = webdriver.Chrome(executable_path="D:\Program Files\Webdrivers\chromedriver.exe")
+    elif browserchoice == 'firefox':
+        driver = webdriver.Firefox(executable_path="D:\Program Files\Webdrivers\geckodriver.exe")
+    else:
+        print(f"'{browserchoice}' dosen't exist or is not implemented yet")
     driver.implicitly_wait(0.5)
     driver.maximize_window()
     driver.get("https://syns.studio/more-ore/")
-    #identify element
-    l= driver.find_element_by_xpath("//*[@class='ore-wrapper']")
-    #get x, y coordinates
-    loc = l.location
-    #get height, width
-    s = l.size
+    l= driver.find_element_by_xpath("//*[@class='ore-wrapper']")    #identify element
+    loc = l.location    #get x, y coordinates
+    s = l.size    #get height, width
     driver.close()
     offset = 25
-    xscreen = loc['x']-offset
-    yscreen = loc['y']+(s['height']//2)-offset
-    window = {"top": yscreen, "left": xscreen, "width": s['width']+2*offset, "height": s['height']+2*offset}
+    xscreen = int(loc['x']-offset)
+    yscreen = int(loc['y']+(int(s['height'])//2)-offset)
+    window = {"top": yscreen, "left": xscreen, "width": int(s['width'])+2*offset, "height": int(s['height'])+2*offset}
     return xscreen, yscreen, offset, window
 
 def autoclicker(xscreen, yscreen, offset, window):
     while True:
-        if read_key() == "ü": # set the key to start the program.
-            tstart = time.time()
+        if read_key() == 'ü': # set the key to start the program.
+            # tstart = time.time()
             img = np.array(mss.mss().grab(window))
             colourimg = img[:, :, ::-1].copy() # Convert RGB to BGR
             colourimg = cv.medianBlur(colourimg,5)
@@ -69,8 +72,13 @@ def autoclicker(xscreen, yscreen, offset, window):
             mouse.move(xscreen-2*offset, yscreen-2*offset)
             # print(time.time() - tstart)
             time.sleep(0.36)
+        
+        if is_pressed('shift+space'):
+            exit()
 
-        # exit()
+        if is_pressed('shift+y'):
+            mouse.click()
+            time.sleep(0.05)
 
 if __name__ == '__main__':
     main()
